@@ -1,3 +1,13 @@
+/*
+ * @Copyright 2017 - Licensed under MIT License terms.
+ * 
+ * @author: coshkun
+ * https://github.com/coshkun/
+ * 
+ * -funcybox directory for hobby electronics, and code samples
+ * -sketch_kara-simsek added as a hello arduino world project
+ */
+
 void setup() {
   // put your setup code here, to run once:
   for(int i = 0; i<13; i++)
