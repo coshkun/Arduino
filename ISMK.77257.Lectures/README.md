@@ -8,3 +8,6 @@ Contributions are closed for anyone who out of my classroom. That means, any str
 ISMK.77257.Lectures
 ---------------------
 Lab notes and sample projects from ISMK.77257.Arduino classroom.
+
+ReadOnly Copy Of Lecture Notes Here:
+https://1drv.ms/u/s!AuIKZ6nWyHAJimmGzlO-wf3HCoif
