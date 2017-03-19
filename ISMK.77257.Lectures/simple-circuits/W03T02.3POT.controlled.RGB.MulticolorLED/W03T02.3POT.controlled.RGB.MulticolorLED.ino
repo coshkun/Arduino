@@ -3,14 +3,13 @@
  * @author: coskun
  * 
  * W03T02.Simple-Circutis.3POT.controlled.RGB.MulticolorLED
- * 
+ * https://circuits.io/circuits/4363950-w03t02-3pot-controlled-rgb-multicolorled
  * 
  * Bu projede 3 ayrı pottan okunan analog değerler,
  * RGB çokrenkled üzerinde 3 ayrı renk kanalını 
  * kontrol etmek içi kullanıldı
  * 
- * Not: Bu test.te simulator arızası yüzünden fiziksel devre 
- * kullandık. 
+ * Not: Bu test.te fiziksel devre kullandık. 
  */
 
 int O=12,R=11,B=10,G=9;
