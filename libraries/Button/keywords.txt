@@ -1,0 +1,6 @@
+Button	LITERAL1
+ButtonState	KEYWORD1
+Name	KEYWORD1
+Counter	KEYWORD1
+isPressed	KEYWORD2
+processButton	KEYWORD2
