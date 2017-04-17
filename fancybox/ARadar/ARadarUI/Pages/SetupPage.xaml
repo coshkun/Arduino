@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="ARadarUI.Pages.SetupPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ARadarUI.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <SplitView x:Name="splitMainMenu" IsPaneOpen="False" DisplayMode="CompactOverlay" CompactPaneLength="35" OpenPaneLength="250">
+            <SplitView.Pane>
+                <StackPanel Background="DarkGray">
+                    <Button x:Name="btnHamburger" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" Background="{x:Null}" Click="btnHamburger_Click" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnHome" FontFamily="Segoe MDL2 Assets" Content="&#xEA8A;" Background="{x:Null}" Click="btnHome_Click" />
+                        <TextBlock Text="Home Screen" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnFullScreen" FontFamily="Segoe MDL2 Assets" Content="&#xE95A;" Background="{x:Null}" Click="btnFullScreen_Click" />
+                        <TextBlock Text="Full Screen View" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnSetup" FontFamily="Segoe MDL2 Assets" Content="&#xE115;" Background="{x:Null}"  Click="btnSetup_Click"/>
+                        <TextBlock Text="Setup Panel" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnAboutPage" FontFamily="Segoe MDL2 Assets" Content="&#xE82F;" Background="{x:Null}" Click="btnAboutPage_Click" />
+                        <TextBlock Text="About Arduino Radar" VerticalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <TextBlock Text="Setup Page goes here.." />
+            </SplitView.Content>
+        </SplitView>
+    </Grid>
+</Page>
