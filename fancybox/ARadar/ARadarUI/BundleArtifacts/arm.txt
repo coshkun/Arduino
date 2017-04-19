@@ -1,2 +1,2 @@
-MainPackage=C:\GitHub\Arduino\fancybox\ARadar\ARadarUI\bin\ARM\Release\ARadarUI_1.0.0.0_ARM.appx
-SymbolPackage=C:\GitHub\Arduino\fancybox\ARadar\ARadarUI\AppPackages\ARadarUI_1.0.0.0_Test\ARadarUI_1.0.0.0_ARM.appxsym
+MainPackage=C:\GitHub\Arduino\fancybox\ARadar\ARadarUI\bin\ARM\Release\ARadarUI_1.0.2.0_ARM.appx
+SymbolPackage=C:\GitHub\Arduino\fancybox\ARadar\ARadarUI\AppPackages\ARadarUI_1.0.2.0_Test\ARadarUI_1.0.2.0_ARM.appxsym

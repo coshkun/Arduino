@@ -5,7 +5,7 @@
     xmlns:local="using:ARadarUI.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <SplitView x:Name="splitMainMenu" IsPaneOpen="False" DisplayMode="CompactOverlay" CompactPaneLength="35" OpenPaneLength="250">
@@ -31,8 +31,90 @@
                 </StackPanel>
             </SplitView.Pane>
             <SplitView.Content>
-                <TextBlock Text="Setup Page goes here.." />
+                <Grid>
+                    <Grid Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Top" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{x:Null}" >
+                            <Button x:Name="btnSettingsBack" FontFamily="Segoe MDL2 Assets" Content="&#xE72B;" Background="{x:Null}" Click="btnSettingsBack_Click"/>
+                            <Button x:Name="btnSettingsContent" Content="UI Settings" Margin="15,0,0,0" Background="{x:Null}" Click="btnSettingsContent_Click"/>
+                            <Button x:Name="btnSettingsLicence" Content="Device Settings" Background="{x:Null}" Click="btnSettingsLicence_Click" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                            <Button x:Name="btnSaveSettings" Content="&#xE8FB;" FontFamily="Segoe MDL2 Assets" Background="{x:Null}" Foreground="Green" ToolTipService.ToolTip="Save Settings" Click="btnSaveSettings_Click" />
+                            <Button x:Name="btnDiscardSettings" Content="&#xE947;" FontFamily="Segoe MDL2 Assets" Background="{x:Null}" Foreground="Red" ToolTipService.ToolTip="Cancel and Reset To Last Settings" Click="btnDiscardSettings_Click" />
+                            <Button x:Name="btnResetSettings" Content="&#xE8F7;" FontFamily="Segoe MDL2 Assets" Background="{x:Null}" Foreground="DarkCyan" ToolTipService.ToolTip="Reset to System Defaults" Click="btnResetSettings_Click" />
+                        </StackPanel>
+                    </Grid>
+                    
+                    <FlipView x:Name="flipView" HorizontalAlignment="Left" Margin="0,35,0,0" VerticalAlignment="Top" >
+                        <FlipView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </FlipView.ItemsPanel>
+
+                        <FlipViewItem>
+                            <FlipViewItem.Content>
+                                <StackPanel Orientation="Vertical" Margin="50,20,50,50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                    <TextBlock Text="Device Settings" FontWeight="Bold" />
+                                    <Grid Margin="0,30,0,0" Height="485" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="444*"/>
+                                            <ColumnDefinition Width="445*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Orientation="Vertical" Margin="0,0,5,0">
+                                            <TextBlock Text="Select Connection Settings"></TextBlock>
+                                            <StackPanel Orientation="Horizontal">
+                                                <ComboBox x:Name="cmbPortNo" Header="Port" Margin="5" />
+                                                <ComboBox x:Name="cmbPortSpeed" Header="Speed"  Margin="5" />
+                                                <Button x:Name="btnTestConnection" Content="Test Conection" Margin="5,27,0,0" />
+                                                <Button x:Name="btnLunchDevice" Content="Lunch Device" Margin="5,27,0,0" />
+                                            </StackPanel>
+                                            <CheckBox x:Name="chkLogBuffer" Content="Log SerCom96 Buffer to file" />
+                                            <TextBlock Text="Below screen shows current buffer states" Margin="0,20,0,10" />
+                                            <ListBox x:Name="lstBufferLog" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Height="250"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Orientation="Vertical">
+                                            <TextBlock Text="Syncronization Settings" />
+                                            <DatePicker x:Name="dtpDatePicker" Header="Device Date" Margin="5" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <TimePicker x:Name="dtpTimePicker" Header="Device Clock (in UTC)" Margin="5" ClockIdentifier="24HourClock" />
+                                                <TextBox x:Name="txtSeconds" Header="Seconds" Margin="5" />
+                                                <TextBox x:Name="txtMiliSeconds" Header="Miliseconds" Margin="5" />
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button x:Name="btnGetDeviceTime" Content="Get Device Time" Margin="5" />
+                                                <Button x:Name="btnSetDeviceTime" Content="Set Device Time" Margin="5" />
+                                                <Button x:Name="btnUseSystemLocal" Content="Use System Local" Margin="30,5,5,5" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </FlipViewItem.Content>
+                        </FlipViewItem>                        
+                        
+                        
+                        <FlipViewItem>
+                            <FlipViewItem.Content>
+                                <StackPanel Orientation="Vertical" Margin="50,20,50,50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                    <TextBlock Text="Interface Settings" />
+                                    <Grid Margin="0,30,0,0" Padding="10" Height="485" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <ToggleSwitch x:Name="toggleTheme" Header="Dark Theme" HorizontalAlignment="Left" VerticalAlignment="Top" Toggled="toggleTheme_Toggled"/>
+                                    </Grid>
+                                </StackPanel>
+                            </FlipViewItem.Content>
+                        </FlipViewItem>
+
+                    </FlipView>
+                </Grid>
             </SplitView.Content>
         </SplitView>
+
     </Grid>
 </Page>

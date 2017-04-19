@@ -317,6 +317,9 @@ namespace ARadarUI
             ds = args.DrawingSession;
             if (sender != null)
             {
+                if (canViewPort.Size.Width == null || canViewPort.Size.Width == null) //bugfix for stupid uwp unknown null-ref-exeption
+                    return;
+
                 w = (float)canViewPort.Size.Width;  // (float)((CanvasAnimatedControl)sender).Height;
                 h = (float)canViewPort.Size.Height; // (float)((CanvasAnimatedControl)sender).Width; 
                 origin = new Vector2(w / 2, h / 2);

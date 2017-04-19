@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -23,8 +24,14 @@ namespace ARadarUI
     /// </summary>
     sealed partial class App : Application
     {
-        public static ApplicationDataContainer LocalSettings = ApplicationData.Current.LocalSettings;
-        public static StorageFolder LocalFolder = ApplicationData.Current.LocalFolder;
+        public ApplicationDataContainer LocalSettings = ApplicationData.Current.LocalSettings;
+        public StorageFolder LocalFolder = ApplicationData.Current.LocalFolder;
+        private ApplicationDataCompositeValue _ARadarCurrentConfig, _ARadarDefaultConfig;
+        //Props
+        public ApplicationDataCompositeValue ARadarCurrentConfig {
+            get { return (ApplicationDataCompositeValue)LocalSettings.Values["defaultSettings"]; } set { } }
+        public ApplicationDataCompositeValue ARadarDefaultConfig {
+            get { return (ApplicationDataCompositeValue)LocalSettings.Values["currentSettings"]; } set { } }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -49,6 +56,8 @@ namespace ARadarUI
                 this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
+            GetARadarSettings();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -81,6 +90,62 @@ namespace ARadarUI
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+        }
+
+        private void GetARadarSettings()
+        {
+            // Debug only (ne yaptınızı bilmiyorsanız dokunmayın)
+            //LocalSettings.Values.Remove("defaultSettings");
+            //LocalSettings.Values.Remove("currentSettings");
+
+            // Read data from a composite setting
+            var defaults = (ApplicationDataCompositeValue)LocalSettings.Values["defaultSettings"];
+            var current = (ApplicationDataCompositeValue)LocalSettings.Values["currentSettings"];
+            
+            if (current == null)
+            {
+                if (defaults == null)
+                {
+                    // No data, lets create the defaults here.
+                    _ARadarDefaultConfig = new ApplicationDataCompositeValue();
+                    _ARadarDefaultConfig["ui_dark_theme"] = (bool)false;
+                    _ARadarDefaultConfig["device_port_number"] = (int)4;
+                    _ARadarDefaultConfig["device_port_speed"] = (int)57600;
+                    _ARadarDefaultConfig["device_buffer_file_logging"] = (bool)false;
+                    _ARadarDefaultConfig["device_utc_time"] = (string)DateTime.Now.ToBinary().ToString();
+                    
+
+                    // Save Settings
+                    LocalSettings.Values.Add("defaultSettings", _ARadarDefaultConfig);
+
+                    _ARadarCurrentConfig = new ApplicationDataCompositeValue();
+                    _ARadarDefaultConfig.Select( x=> new { x.Key , x.Value } )
+                        .ToList().ForEach(i => { _ARadarCurrentConfig.Add(i.Key, i.Value); });
+
+                    LocalSettings.Values.Add("currentSettings", _ARadarCurrentConfig);
+                }
+                else
+                {
+                    // there is defaut settings from previous but no curent
+                    // recover sys defaults
+                    _ARadarDefaultConfig = defaults;
+                    // duplicate to current
+                    _ARadarCurrentConfig = new ApplicationDataCompositeValue();
+                    _ARadarDefaultConfig.Select(x => new { x.Key, x.Value })
+                        .ToList().ForEach(i => { _ARadarCurrentConfig.Add(i.Key, i.Value); });
+
+                    LocalSettings.Values.Add("currentSettings", _ARadarCurrentConfig);
+                } 
+            }
+            else
+            {
+                // there is current settings from previous, read from system
+                _ARadarCurrentConfig = current;
+            }
+
+            // Publish to App
+            ARadarCurrentConfig = _ARadarCurrentConfig;
+            ARadarDefaultConfig = _ARadarDefaultConfig;
         }
 
         /// <summary>
