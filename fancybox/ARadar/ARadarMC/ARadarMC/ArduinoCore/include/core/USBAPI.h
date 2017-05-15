@@ -78,7 +78,7 @@ struct ring_buffer;
 #if ((RAMEND - RAMSTART) < 1023)
 #define SERIAL_BUFFER_SIZE 16
 #else
-#define SERIAL_BUFFER_SIZE 64
+#define SERIAL_BUFFER_SIZE 128  // <-- original code was 64 here, hacked by coskun
 #endif
 #endif
 #if (SERIAL_BUFFER_SIZE>256)
