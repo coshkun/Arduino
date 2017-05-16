@@ -248,17 +248,13 @@ NMEAbuffer::NMEAbuffer()
 void NMEAbuffer::syncronize()
 {
 	char* sync = &states[0];
-	//Serial.println(*sync); //Debug
-	//char *b = (char*) this;
-	char *b;
+	char* remote = &states[1];
 	
 	  if (Serial.available() && *sync == '0') // gelen veri olduðunda oku, yoksa gönderime devam et
 	  {
-		  byte byts = Serial.readBytes(b, sizeof(NMEAbuffer));
-		  //String _inboud = Serial.readString();
-		  //memcpy(b,&_inboud,sizeof(char[96]));
-		  if(byts == 96)
-			*sync = '1'; // alert me with new data
+		  _getInputStr();
+		  _parseInputStr();
+		  *sync = '1';
 	  }
 	  else
 	  {
@@ -295,15 +291,15 @@ void NMEAbuffer::process()
 	  }
 }
 
-void NMEAbuffer::getInputStr(){
+void NMEAbuffer::_getInputStr(){
 
-	recvWithEndMarker();
+	_recvWithEndMarker();
 	if (_newData == true) {
 		Serial.println(receivedChars);
 		_isInputReaded = true; _newData = false;
 	}
 }
-void NMEAbuffer::parseInputStr(){
+void NMEAbuffer::_parseInputStr(){
 	if (_isInputReaded)
 	{
 		Serial.println("Lenght: " + String(String(receivedChars).length())); //Debug
@@ -321,7 +317,7 @@ void NMEAbuffer::parseInputStr(){
 		_isInputReaded = false; // reset Flag before exit
 	}
 }
-void NMEAbuffer::recvWithEndMarker() {
+void NMEAbuffer::_recvWithEndMarker() {
 	static byte ndx = 0;
 	byte numChars = 95;
 	char endMarker = '\n';

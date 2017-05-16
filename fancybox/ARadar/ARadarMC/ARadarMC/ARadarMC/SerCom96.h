@@ -127,9 +127,9 @@ class NMEAbuffer // 96 char lenght
 	void syncronize();
 	void process();
 	
-	void getInputStr();
-	void parseInputStr();
-	void recvWithEndMarker();
+	void _getInputStr();
+	void _parseInputStr();
+	void _recvWithEndMarker();
 	private:
 	//NMEAbuffer( const NMEAbuffer &c );
 	//NMEAbuffer& operator=( const NMEAbuffer &c );

@@ -30,9 +30,10 @@
 */
 
 //delegates
-void initSDCard(bool& LogFlag);
+void initSDCard(bool *LogFlag);
+void logToFile();
 //variables
-NMEAbuffer sercom_buffer;
+static NMEAbuffer sercom_buffer;
 //File logFile;
 bool isLoggingPosibble = false;
 
@@ -42,24 +43,28 @@ void setup() {
 	while(!Serial){};
 	  
 	Serial.println("Booting..");
-	//initSDCard(isLoggingPosibble);
+	//initSDCard(&isLoggingPosibble);
 }
 
 void loop() {
 	//Serial.print(sercom_buffer.stream->fullSentence);
 	//sercom_buffer.syncronize(); //(char*)&sercom_buffer
 	//sercom_buffer.process();
-	sercom_buffer.getInputStr();
-	sercom_buffer.parseInputStr();
+	sercom_buffer._getInputStr();
+	sercom_buffer._parseInputStr();
+	
+	//Mega2560 builds:
+	//if(sercom_buffer._newData == true && isLoggingPosibble == true){
+		//logToFile();}
 }
 
-void initSDCard(bool& LogFlag){
+void initSDCard(bool *LogFlag){
 	
 	//if (!SD.begin(SERCOM_SD_CS)) {
 		//Serial.println("SDC failed! or Card Holder is Empty.");
 		//return;
 	//}
-	//Serial.println("initialization done.");
+	//Serial.println("initializing SDC");
 	//if(!SD.exists(SERCOM_LOGFILE_NAME)){
 		//logFile = SD.open(SERCOM_LOGFILE_NAME, FILE_WRITE);
 	//}else{
@@ -68,8 +73,19 @@ void initSDCard(bool& LogFlag){
 		//
 	//if (logFile){
 		//Serial.println(String(logFile.name()) +" is ready to logging.");
-		//logFile.close();}
-	//
-	//LogFlag = true;
+		//logFile.close();		
+		//}   //This breaks memory integrity
+//
+	//*LogFlag = true;
 	//Serial.println("SDC initialized.. Flag: " + String(isLoggingPosibble));
+}
+
+void logToFile(){
+	//logFile = SD.open(SERCOM_LOGFILE_NAME, FILE_WRITE);
+	//if(logFile){
+		//logFile.println(sercom_buffer.stream->fullSentence);
+	//logFile.close();}
+	//else{
+	//Serial.println("Err.openning file.");}
+	
 }
