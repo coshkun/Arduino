@@ -1,8 +1,10 @@
 ﻿/*Begining of Auto generated code by Atmel studio */
 #include <Arduino.h>
 // include the SD library:
-#include <SPI.h>
-#include <SD.h>
+//#include <SPI.h>
+//#include <SD.h>
+#define ANTENNA_TURN_DELAY 637 //uS for 1 degree
+#define ANTENNA_PIN 9
 /*End of auto generated code by Atmel studio */
 #include "SerCom96.h"
 
@@ -29,11 +31,14 @@
  sentc  $RARAW,000,00.000,R,000,00.000,R,000,00.000,R,000,00.000,R,000,00.000,R,* chksum[5] CR LF
 */
 
+
 //delegates
+void Process();
 void initSDCard(bool *LogFlag);
 void logToFile();
 //variables
 static NMEAbuffer sercom_buffer;
+static int antennaAngle;
 //File logFile;
 bool isLoggingPosibble = false;
 
@@ -41,21 +46,60 @@ void setup() {
 	// put your setup code here, to run once:
 	Serial.begin(115200);
 	while(!Serial){};
-	  
+	
+	pinMode(ANTENNA_PIN, OUTPUT);
+	digitalWrite(ANTENNA_PIN, LOW);
+	antennaAngle = -1;
+	
 	Serial.println("Booting..");
 	//initSDCard(&isLoggingPosibble);
+	sercom_buffer.process(Process); //attach your ISR function once.
 }
 
 void loop() {
-	//Serial.print(sercom_buffer.stream->fullSentence);
-	//sercom_buffer.syncronize(); //(char*)&sercom_buffer
-	//sercom_buffer.process();
-	sercom_buffer._getInputStr();
-	sercom_buffer._parseInputStr();
-	
+	sercom_buffer.syncronize();
+	//you can override the process() for incoming duties
+
 	//Mega2560 builds:
 	//if(sercom_buffer._newData == true && isLoggingPosibble == true){
 		//logToFile();}
+}
+
+void turnAntenna()
+{
+	  digitalWrite(9, HIGH);
+	  delayMicroseconds(ANTENNA_TURN_DELAY);
+	  digitalWrite(9, LOW);
+}
+
+void Process(){
+	char *sync = &(sercom_buffer.states[0]);
+	char *remote = &(sercom_buffer.states[1]);
+	
+	if (*sync == '0') // calculate new package in to buffer
+	{
+		Serial.println(*sync);
+		for (byte i=0;i<5;i++)
+		{
+			Serial.print(" " + i);
+			antennaAngle +=1;
+			turnAntenna(); // 1 degree at each call
+			delayMicroseconds(2777); // this is total time for now. substract wave fly time from this.
+			//float distance = 3.14;
+			//sercom_buffer.stream->sentence[i].SetValue(antennaAngle, distance, BearingType::TRUE);
+			//sercom_buffer.stream->GetValue();
+		}
+		//Serial.print(sercom_buffer.stream->fullSentence);
+		if(antennaAngle == 359) //that means after 359 sended.
+			antennaAngle = -1;
+		return;
+	}
+	if (*sync == '2')
+	{
+		//process incoming commands here..
+		Serial.println("something comming.."); //debug
+		return;
+	}
 }
 
 void initSDCard(bool *LogFlag){

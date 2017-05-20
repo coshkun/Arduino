@@ -17,6 +17,8 @@
 #include "SerCom96.h"
 #include "Arduino.h"
 
+volatile static voidFuncPtr usrFncPtr;
+
 // default constructor
 SerCom96::SerCom96()
 {
@@ -250,73 +252,72 @@ void NMEAbuffer::syncronize()
 	char* sync = &states[0];
 	char* remote = &states[1];
 	
-	  if (Serial.available() && *sync == '0') // gelen veri olduðunda oku, yoksa gönderime devam et
-	  {
-		  _getInputStr();
-		  _parseInputStr();
-		  *sync = '1';
-	  }
-	  else
-	  {
-		  //debug_Buffer(buffer);
-		  if(*sync == '1') // iþlenmemiþ veriler var, git iþle, sonra yine gel
-		  return;
+	_getInputStr();
+	_parseInputStr();
+	
+	if (*sync == '0') // gelen veri yok yeni paket gönder
+	{
+		if(usrFncPtr)
+			usrFncPtr();
+		
+		Serial.print(states + reserved + String(stream->fullSentence)); //((NMEAbuffer*)b)->stream->fullSentence
+		*sync = '1'; //alert receiver with new data
+	}
 
-		  //buffer'ý karsýya gönder
-		  else if (*sync == '0')
-		  {
-			  *sync = '1'; //alert receiver with new data
-			  Serial.print(String(states) + String(reserved) + stream->fullSentence); //((NMEAbuffer*)b)->stream->fullSentence
-			  *sync = '0'; //start listen port for next cmd
-			  delayMicroseconds(13334);
-		  }
-	  }
+	if(*sync == '1') // karþýda iþlenmemiþ veriler var, yeni paket atmak için sýraný bekle
+	return;
+
+	//karþýdan yeni talimat geldiðinde gönderim yapma, talimatý iþleme al
+	if (*sync == '2')
+	{
+		if(usrFncPtr)
+			usrFncPtr();
+		*sync = '0'; //reset sending flag before exit.
+	}
 }
-void NMEAbuffer::process()
+
+void NMEAbuffer::process() { usrFncPtr = nothing; }
+void NMEAbuffer::process(void (*userFunc)(void))
 {
-	  char* sync = &states[0]; //senkron bayragýný yakala
-	  //Serial.println("fmPrc: " + String(*sync));
-	  //Serial.write(*buffer, sizeof(char[96]));
-	  if(*sync == '0') // gonderime hazýr degilsen, defol git sonra gel
-	  return;
-	  
-	  if (*sync == '1')
-	  {
-		  Serial.println(String("Incoming Data:"));
-		  Serial.print(String(states) + String(reserved) + stream->fullSentence);
-		  //delete stream;
-		  //stream = new NMEAsentence();
-		  
-		  *sync = '0'; // Exit after processing
-	  }
+	// sync = 0 write new package to buffer.
+	// sync = 2 read new package from buffer and process.
+	// you can check for special command set in 'remote'.
+	/*  pls note that you have max "13334 uS" to exit this function.
+		you will not be terminated automaticaly. 
+		however you cant pass this time limit for the consistency.
+	*/
+	usrFncPtr = userFunc;
+	//if(usrFncPtr)
+		//usrFncPtr();
 }
 
 void NMEAbuffer::_getInputStr(){
 
 	_recvWithEndMarker();
 	if (_newData == true) {
-		Serial.println(receivedChars);
+		// Serial.println(receivedChars); //Debug
 		_isInputReaded = true; _newData = false;
 	}
 }
 void NMEAbuffer::_parseInputStr(){
 	if (_isInputReaded)
 	{
-		Serial.println("Lenght: " + String(String(receivedChars).length())); //Debug
+		// Serial.println("Lenght: " + String(String(receivedChars).length())); //Debug
 		states = String(receivedChars[0]) + String(receivedChars[1]);
-		Serial.println("States: " + states); //Debug
+		// Serial.println("States: " + states); //Debug
 		reserved = "";
 		for (byte i=2;i<16;i++)
 			reserved += String(receivedChars[i]);
-		Serial.println("Reserved: " + reserved); //Debug
+		// Serial.println("Reserved: " + reserved); //Debug
 		
 		memcpy(stream, &receivedChars[16], sizeof(char[80]));
-		Serial.print("Stream: ");
-		Serial.println((char*)stream);
-		//_inputstr = "";
+		// Serial.print("Stream: "); //Debug
+		// Serial.println((char*)stream); //Debug
+		// delete [] receivedChars; //debug
 		_isInputReaded = false; // reset Flag before exit
 	}
 }
+
 void NMEAbuffer::_recvWithEndMarker() {
 	static byte ndx = 0;
 	byte numChars = 95;

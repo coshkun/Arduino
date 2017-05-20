@@ -25,6 +25,8 @@
 #define SERCOM_LOGFILE_NAME "SC96LOG.TXT"
 #endif
 
+typedef void (*voidFuncPtr)(void);
+
 enum BearingType { RELATIVE, TRUE };
 enum CommandType { REGULAR, PRODUCER };
 
@@ -114,23 +116,24 @@ class NMEAbuffer // 96 char lenght
 		String states; // char[2] gibi kullan;
 		String reserved; // char[14] gibi kullan;
 		NMEAsentence *stream;
-	
+		
+	private:
 		char receivedChars[96];
 		volatile bool _newData;
 		bool _isInputReaded;
-	private:
-
+	
 	//functions
 	public:
 	NMEAbuffer();
 	~NMEAbuffer();
 	void syncronize();
 	void process();
+	void process(void (*)(void));
 	
+	private:	
 	void _getInputStr();
 	void _parseInputStr();
 	void _recvWithEndMarker();
-	private:
 	//NMEAbuffer( const NMEAbuffer &c );
 	//NMEAbuffer& operator=( const NMEAbuffer &c );
 
@@ -157,5 +160,8 @@ class NMEAlog
 		//NMEAlog( const NMEAlog &c );
 		//NMEAlog& operator=( const NMEAlog &c );
 };
+
+//helpers
+static void nothing(void) {}
 
 #endif //__SERCOM96_H__
